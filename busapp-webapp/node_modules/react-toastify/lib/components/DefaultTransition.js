@@ -1,0 +1,87 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Transition = require('react-transition-group/Transition');
+
+var _Transition2 = _interopRequireDefault(_Transition);
+
+var _glamor = require('glamor');
+
+var _slide = require('./../animations/slide');
+
+var _slide2 = _interopRequireDefault(_slide);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+var animate = {
+  animationDuration: '0.75s',
+  animationFillMode: 'both'
+};
+
+var styles = function styles(pos) {
+  var _getAnimation = (0, _slide2.default)(pos),
+      enter = _getAnimation.enter,
+      exit = _getAnimation.exit;
+
+  var enterAnimation = _glamor.css.keyframes(enter);
+
+  // injected to the last state of the animation
+  exit.to.padding = 0;
+  exit.to.height = 0;
+  exit.to.marginBottom = 0;
+
+  var exitAnimation = _glamor.css.keyframes(exit);
+
+  return {
+    enter: (0, _glamor.css)(_extends({}, animate, { animationName: enterAnimation })),
+    exit: (0, _glamor.css)(_extends({}, animate, { animationName: exitAnimation }))
+  };
+};
+
+function DefaultTransition(_ref) {
+  var children = _ref.children,
+      position = _ref.position,
+      props = _objectWithoutProperties(_ref, ['children', 'position']);
+
+  var _styles = styles(position),
+      enter = _styles.enter,
+      exit = _styles.exit;
+
+  var onEnter = function onEnter(node) {
+    return node.classList.add(enter);
+  };
+  var onEntered = function onEntered(node) {
+    return node.classList.remove(enter);
+  };
+  var onExit = function onExit(node) {
+    var height = node.getBoundingClientRect().height;
+    node.style.transition = 'padding 0.75s, height 0.75s, marginBottom 0.75s';
+    node.style.minHeight = 0;
+    node.style.height = height > 64 ? height + 'px' : '64px';
+    node.classList.add(exit);
+  };
+
+  return _react2.default.createElement(
+    _Transition2.default,
+    _extends({}, props, {
+      timeout: 750,
+      onEnter: onEnter,
+      onEntered: onEntered,
+      onExit: onExit
+    }),
+    children
+  );
+}
+
+exports.default = DefaultTransition;
